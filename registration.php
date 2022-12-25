@@ -12,6 +12,7 @@
         $role = $_POST["inlineRadioOptions"];
         $name = $_POST["name"];
 
+
         // Validate the form data
         $errors = [];
         if(empty($username)){
@@ -26,15 +27,56 @@
         if($password != $confirmPassword){
             $errors[] = "Passwords do not match";
         }
+        $stmt = $db->prepare("SELECT username FROM user WHERE username = ?");
+        $stmt->execute([$username]);
+        if( $stmt->fetch(PDO::FETCH_ASSOC) != false){
+            $errors[] = "Username already taken";
+        }
+
+        $stmt = $db->prepare("SELECT email FROM user WHERE email = ?");
+        $stmt->execute([$email]);
+        if( $stmt->fetch(PDO::FETCH_ASSOC) != false){
+            $errors[] = "Email already exists";
+        }
 
         // If there are no errors, insert the user into the database
         if(empty($errors)){
             $sql = "INSERT INTO user(username, password, name, email, role) VALUES (?, ?, ?, ?, ?)";
             $stmt = $db->prepare($sql);
             $stmt->execute([$username, $password, $name, $email, $role]);
-            $success = "User registered successfully";
-            header("Location: login.php");
         }
+
+        
+        if($role == 'firm'){
+          $city = $_POST["city"];
+          $address = $_POST["address"];
+          $district = $_POST["district"];
+          
+          $stmt = $db->prepare("SELECT * FROM user WHERE username = ?");
+          $stmt->execute([$username]);
+          $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        }else{
+          $success = "User registered successfully";
+          header("Location: login.php");
+        }
+
+        if(empty($city)){
+            $errors[] = "City is required";
+        }
+        if(empty($address)){
+            $errors[] = "Address is required";
+        }
+        if(empty($district)){
+            $errors[] = "District is required";
+        }
+
+        if(empty($errors)){
+          $sql = "INSERT INTO address(user_id, city, district, address) VALUES (?, ?, ?, ?)";
+          $stmt = $db->prepare($sql);
+          $stmt->execute([$user["id"], $city, $district, $address]);
+          $success = "User registered successfully";
+          header("Location: login.php");
+      }
     }
 ?>
 
@@ -59,6 +101,10 @@
         .card-registration .select-arrow {
             top: 13px;
         }
+        .address{
+          display:none;
+        }
+
     </style>
 </head>
 <header>
@@ -80,15 +126,13 @@
 <body style="background-color:#D3D3D3;">
     <div class="container mt-2" style="background-color:#D3D3D3;">
     <div class="row justify-content-center">
-      <div class="col-md-6">
+      <div class="col-md-10">
+      <form method="post" action="registration.php">
         <div class="card">
           <div class="card-header">
             <h5 class="card-title">Registration</h5>
           </div>
           <div class="card-body">
-            <form method="post" action="registration.php">
-            <div>
-            </div>
              <!-- Display errors, if any -->
                 <?php if(!empty($errors)): ?>
                     <ul>
@@ -116,9 +160,29 @@
                   </div>
                 </div>
               </div>
+              <div class="row address">
+                <div class="col-md-6 mb-4 pb-2">
+                    <div class="form-outline">
+                        <input required type="text" name="city" id="city" class="form-control form-control-lg" />
+                        <label class="form-label" for="city">City</label>
+                    </div>
+                    </div>
+                    <div class="col-md-6 mb-4 pb-2">
+                    <div class="form-outline">
+                        <input required type="text" name="district" id="district" class="form-control form-control-lg" />
+                        <label class="form-label" for="district">District</label>
+                    </div>
+                    </div>
+                    <div class="col-md-6 mb-4 pb-2">
+                    <div class="form-outline">
+                        <input required type="text" name="address" id="address" class="form-control form-control-lg" />
+                        <label class="form-label" for="address">Address</label>
+                    </div>
+                    </div>
+                    </div>
               <div class="row">
                 <div class="col-md-6 mb-4 d-flex align-items-center">
-                  <div class="form-outline datepicker w-100">
+                  <div class="form-outline w-100">
                     <input required type="email" name="email" class="form-control form-control-lg" id="email" />
                     <label for="email" class="form-label">Email</label>
                   </div>
@@ -157,16 +221,18 @@
                     </div>
                     </div>
                 </div>
-                <div style="width:400px; margin: auto;">
-                    <button id="submit" type="submit" class="btn btn-primary btn-block mb-4" disabled>Register</button>
+                
+                    <div style="width:400px; margin: auto;">
+                        <button id="submit" type="submit" class="btn btn-primary btn-block mb-4" disabled>Register</button>
+                    </div>
+                    <div class="text-center">
+                        <p>Already registered? <a href="login.php">Log In</a>
+                        </p>
+                    </div>
+                
                 </div>
-                <div class="text-center">
-                    <p>Already registered? <a href="login.php">Log In</a>
-                    </p>
-                </div>
-            </form>
             </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -179,8 +245,12 @@
     $("input[name='inlineRadioOptions']").change(function(e){
         if($(this).val() == 'firm') {
             $("#nameLabel").text("Firm Name");
+            $(".address").css("display", "flex");
+            $(".address :input").prop('required',true);
         } else {
             $("#nameLabel").text("Name");
+            $(".address").css("display", "none");
+            $(".address :input").prop('required',false);
         }
     });
 
