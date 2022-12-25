@@ -48,6 +48,7 @@
     <title>Registration</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
     <style>
         .card-registration .select-input.form-control[readonly]:not([disabled]) {
             font-size: 1rem;
@@ -60,8 +61,24 @@
         }
     </style>
 </head>
-<body>
-  <div class="container mt-5">
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">STARS2</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        </ul>
+        <span class="navbar-text"><a href="login.php" >Log in</a></span>
+        
+        </div>
+    </div>
+    </nav>
+</header>
+<body style="background-color:#D3D3D3;">
+    <div class="container mt-2" style="background-color:#D3D3D3;">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card">

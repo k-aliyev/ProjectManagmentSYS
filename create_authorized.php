@@ -7,19 +7,11 @@
     <title>Project</title>
     <!-- Add the Bootstrap CSS file -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
   <!-- Add the Bootstrap JavaScript file -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-    <style>
-        .container{
-            margin-top: 30px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            background-color:#FFFFFF;
-            padding: 30px;
-        }
-    </style>
 </head>
 <body style="background-color:#D3D3D3;">
   <header>
@@ -84,7 +76,7 @@
           <div class="row ms-auto">
             <div class="col-md-12 text-end">
                 <button type="submit" class="btn btn-primary ml-auto">Submit Project</button>
-                <button type="button" class="btn btn-danger ml-auto">Cancel</button>
+                <a href="list.php" class="btn btn-danger ml-auto">Cancel</a>
             </div>
         </div>
       </form>

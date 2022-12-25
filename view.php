@@ -7,9 +7,9 @@ if(isset($_GET["id"])){
     $stmt = $db->prepare("select * from project where id = ?");
     $stmt->execute([$_GET["id"]]);
     $project = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if(!isset($project)){
-        header("Location: not-found.php");
+
+    if($project == false){
+        header("Location: not_found.php");
     }else{
         $stmt = $db->prepare("select * from user where id = ? and role= 'instructor'");
         $stmt->execute([$project["advisor_id"]]);
@@ -19,6 +19,18 @@ if(isset($_GET["id"])){
         $stmt->execute([$_GET["id"]]);
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    if(isset($_SESSION["user_role"]) && $_SESSION["user_role"] == 'admin'){
+        $stmt = $db->prepare("select * from user where role= 'instructor' and id != ?");
+        $stmt->execute([$project["advisor_id"]]);
+        $appoint_instructors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $stmt = $db->prepare("SELECT * FROM user WHERE id not in (SELECT user_id FROM members WHERE project_id = ?)
+        and role != 'admin'");
+        $stmt->execute([$project["id"]]);
+        $appoint_students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}else{
+    header("Location: not_found.php");
 }
 
 ?>
@@ -31,19 +43,34 @@ if(isset($_GET["id"])){
     <title>Project</title>
   <!-- Add the Bootstrap CSS file -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
   <!-- Add the Bootstrap JavaScript file -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-  <style>
-        .container{
-            margin-top: 30px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            background-color:#FFFFFF;
-            padding: 30px;
+  <!-- Add the Select JS file -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+   <script>
+    <?php 
+        if(isset($_SESSION["user_role"]) && $_SESSION["user_role"] == "admin"){
+            include "admin_js.php";
         }
-    </style>
+     ?>    
+  </script>
+
+  <style>
+    tbody {
+    display: block;
+    max-height: 200px;
+    overflow: auto;
+    }
+    thead, tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed
+    }
+  </style>
 </head>
 <body style="background-color:#D3D3D3;">
   <header> <?php include "nav.php"; ?> </header>
@@ -74,14 +101,29 @@ if(isset($_GET["id"])){
                     foreach ($members as $key => $value) {
                         array_push($names, $value["name"]);
                     } 
-                    echo implode(" , ", $names);
+                    if(count($names) > 0){
+                        echo implode(" , ", $names);
+                    }else{
+                        echo "No members appointed";
+                    }
                 ?></p>
-                <p><b>Status:</b> <?php echo " {$project["status"]}" ?></p>
+                <p id="statusLabel"><b>Status:</b> <?php echo " {$project["status"]}" ?></p>
                 <div class="project-info-box mt-0">
                     <h5>Requirements</h5>
                     <p class="mb-0">
                         <?php echo $project["requirements"]; ?>
                     </p>
+                </div>
+                <br>
+                <hr>
+                <div class="d-flex justify-content-around">
+                    <?php
+                        if( isset($_SESSION["user_role"]) && $_SESSION["user_role"] == "admin"){
+                            echo "<a href='#' data-bs-toggle='modal' data-bs-target='#membersModel'>Manage members</a>";
+                            echo "<a href='#' data-bs-toggle='modal' data-bs-target='#instructorModel'>Appoint instructor</a>";
+                            echo "<a href='#' data-bs-toggle='modal' data-bs-target='#exampleModal'>Change status</a>";
+                          }
+                    ?>
                 </div>
             </div>
         </div>
@@ -96,8 +138,19 @@ if(isset($_GET["id"])){
     </div>
     <div>
         <!-- Requirements can be here as well  -->
+
+                <!-- Modal -->
+               
+                
+        <?php
+            if(isset($_SESSION["user_role"]) && $_SESSION["user_role"] == "admin"){
+                include "admin_management.php";
+            }
+        
+        ?>
     </div>
     </div>
   </main>
+  
 </body>
 </html>

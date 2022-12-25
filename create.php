@@ -36,15 +36,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["user_role"] == "admin"){
 if(isset($_SESSION["user_role"])){
     if($_SESSION["user_role"] == "firm" || $_SESSION["user_role"] == "student" || $_SESSION["user_role"] == "instructor")
     {
-        // include "create_authorized.php";
-    }else if($_SESSION["user_role"] == "admin"){
         include "create_authorized.php";
     }else{
-        header("Location: login.php");
+        header("Location: list.php");
     }
 }
 else{
-    // header("Location: login.php");
+    header("Location: login.php");
 }
 
 ?>

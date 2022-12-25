@@ -1,0 +1,11 @@
+.container{
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    background-color:#FFFFFF;
+    padding: 30px;
+}
+
+body{
+    background-color:#D3D3D3;
+}

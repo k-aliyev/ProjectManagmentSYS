@@ -5,7 +5,9 @@ session_start();
 
 //r stands for related
 //a stands for all
-
+if(isset($_GET["type"]) && !isset($_SESSION["loggedin"])){
+  header("Location: not_authorized.php");
+}
 if(isset($_GET["type"]) && $_GET["type"]="r"){
     
     $sql= "SELECT * FROM project JOIN members on project.id = members.project_id WHERE members.user_id = ?";
@@ -25,19 +27,11 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
   <title>My Page</title>
   <!-- Add the Bootstrap CSS file -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
   <!-- Add the Bootstrap JavaScript file -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-  <style>
-        .container{
-            margin-top: 30px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            background-color:#FFFFFF;
-            padding: 30px;
-        }
-    </style>
 </head>
   <body style="background-color:#D3D3D3;">
   <header>
@@ -64,21 +58,19 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
                         <th scope='col'>{$value["name"]}</th>
                         <th scope='col'>{$value["year"]} {$value["semester"]}</th>";
 
-              if($_SESSION["user_role"] == "admin"){
-                  echo "<th scope='col'>";
-                  switch($value["status"]){
-                    case "waiting":
-                      echo "<button type='button' class='btn btn-warning' disabled>Waiting</button>";
-                      break;
-                    case "accepted":
-                      echo "<button type='button' class='btn btn-success' disabled>Accepted</button>";
-                      break;
-                    case "rejected":
-                      echo "<button type='button' class='btn btn-danger' disabled>Rejected</button>";
-                      break;
-                  }
-                  echo "</th>";
-                }
+               echo "<th scope='col'>";
+               switch($value["status"]){
+                case "waiting":
+                  echo "<button type='button' class='btn btn-warning' disabled>Waiting</button>";
+                  break;
+                case "accepted":
+                  echo "<button type='button' class='btn btn-success' disabled>Accepted</button>";
+                  break;
+                case "rejected":
+                  echo "<button type='button' class='btn btn-danger' disabled>Rejected</button>";
+                  break;   
+                }   
+                echo "</th>";  
 
               if(isset($_GET["type"]) && $_GET["type"]="r"){
                 if(in_array($_SESSION["user_role"], $roles)){
@@ -96,6 +88,7 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
               echo "</tr>";
             }
 
+
             if(isset($_GET["type"]) && $_GET["type"]="r"){
               echo "<tr><td colspan='4'><a href='create.php'>Create new project + </a><td></tr>";
           }
@@ -104,5 +97,4 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
     </div>
   </main>
 </body>
-  
 </html>
