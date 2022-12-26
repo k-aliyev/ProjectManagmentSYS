@@ -81,7 +81,9 @@
                             <a href="#!">Forgot password?</a>
                         </div>
                         <!-- Submit button -->
-                        <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+                        <div class="row mb-4 text-center">
+                            <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+                        </div>
                         <!-- Register buttons -->
                         <div class="text-center">
                             <p>Not a member? <a href="registration.php">Register</a>

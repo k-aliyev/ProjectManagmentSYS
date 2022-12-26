@@ -26,11 +26,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   JOIN user on user.id = members.user_id WHERE ";
   if(isset($_POST["member_name"]) && $_POST["member_name"] != ""){
     $sql = $sql."user.name like ? ";
-    $elements[] = $_POST["member_name"];
+    $elements[] = "%{$_POST["member_name"]}%";
   }
   if(isset($_POST["project_name"]) && $_POST["project_name"] != ""){
     $sql = $sql."project.name like ? ";
-    $elements[] = $_POST["project_name"];
+    $elements[] = "%{$_POST["project_name"]}%";
   }
   if(isset($_POST["year"]) && $_POST["year"] != ""){
     $sql = $sql."project.year = ? ";
