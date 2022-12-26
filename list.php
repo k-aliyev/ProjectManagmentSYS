@@ -6,7 +6,7 @@ session_start();
 //r stands for related
 //a stands for all
 if(isset($_GET["type"]) && !isset($_SESSION["loggedin"])){
-  header("Location: not_authorized.php");
+  header("Location: login.php");
 }
 if(isset($_GET["type"]) && $_GET["type"]="r"){
     
@@ -29,9 +29,14 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
   <!-- Add the Bootstrap JavaScript file -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+  <script><?php
+   if(isset($_SESSION["user_role"]) && in_array($_SESSION["user_role"], $roles)){
+    include "user_list_js.php";
+   }
+  ?></script>
 </head>
   <body style="background-color:#D3D3D3;">
   <header>
@@ -76,7 +81,7 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
                 if(in_array($_SESSION["user_role"], $roles)){
                   echo "<th scope='col'>
                         <a href='edit.php?id={$value["id"]}'>edit</a>
-                        <a href='delete.php?id={$value["id"]}'>delete</a>
+                        <a data-bs-toggle='modal' onclick='prepareDelete(this)' data-id='{$value["id"]}' data-bs-target='#deleteModal' href='#'>delete</a>
                       </th>";
                 }
               }
@@ -96,5 +101,32 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
       </tbody>
     </div>
   </main>
+
+  <?php
+   if(isset($_SESSION["user_role"]) && in_array($_SESSION["user_role"], $roles)){
+    echo "<div class='modal fade' id='deleteModal' tabindex='-1' aria-labelledby='deleteModal' aria-hidden='true'>
+    <div class='modal-dialog'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 class='modal-title' id='deleteModal'>Delete Project</h5>
+          <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+        </div>
+        <div class='modal-body'>
+          <div class='form-group'>
+            <label for='deleteInput'>Are you sure?</label>
+            <input type='text' class='form-control' id='deleteInput' aria-describedby='deleteHelp'>
+            <small id='deleteHelp' class='form-text text-muted'>Write DELETE and press submit button to delete project</small>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
+          <button type='button' id='deleteBtn' disabled onclick='deleteProject()' class='btn btn-primary'>Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>";
+   }
+  ?>
+
 </body>
 </html>

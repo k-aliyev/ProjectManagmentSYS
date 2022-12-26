@@ -66,13 +66,9 @@
               <option val="spring">Spring</option>
             </select>
           </div>
-          <?php
-              if($_SESSION["user_role"] == "admin"){
-                  echo '<div class="form-group">
-                          <a href="#">Add Files +</a>
-                  </div>';
-              }
-          ?>
+          <div class="form-group">
+              <a href="#">Add Files +</a>
+            </div>
           <div class="row ms-auto">
             <div class="col-md-12 text-end">
                 <button type="submit" class="btn btn-primary ml-auto">Submit Project</button>

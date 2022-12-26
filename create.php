@@ -4,7 +4,7 @@ session_start();
 require "./data.php";
 require "./db.php";
 
-if($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["user_role"] == "admin"){
+if($_SERVER["REQUEST_METHOD"] == "POST" && in_array($_SESSION["user_role"], $roles)){
     // Get the form data
     $name = $_POST["name"];
 
@@ -19,8 +19,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["user_role"] == "admin"){
         $stmt = $db->query("SELECT count(*) from project");
         $id = $stmt->fetchColumn();
 
-        echo $id;
-
         $sql = "INSERT INTO project(id, name, description, requirements, software, hardware, status, year, semester, advisor_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
         $stmt->execute([$id + 1, $name, $_POST["description"], $_POST["requirements"],$_POST["software"],$_POST["hardware"],"waiting",date("Y"), $_POST["semester"], -1]);
@@ -31,18 +29,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["user_role"] == "admin"){
         header("Location: list.php?type=r");
     }
 }
-
-
-if(isset($_SESSION["user_role"])){
-    if($_SESSION["user_role"] == "firm" || $_SESSION["user_role"] == "student" || $_SESSION["user_role"] == "instructor")
-    {
-        include "create_authorized.php";
-    }else{
-        header("Location: list.php");
-    }
-}
-else{
-    header("Location: login.php");
+else if($_SERVER["REQUEST_METHOD"] == "GET" && in_array($_SESSION["user_role"], $roles)){
+    include "create_authorized.php";
+}else{
+    header("Location: not_authorized.php");
 }
 
 ?>

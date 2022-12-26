@@ -9,14 +9,25 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="list.php">All Projects</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="list.php?type=r">My Projects</a>
-        </li>
+        <?php
+          if(isset($_SESSION["user_role"]) && in_array($_SESSION["user_role"], $roles)){
+            echo "<li class='nav-item'>
+                  <a class='nav-link active' href='list.php?type=r'>My Projects</a>
+                </li>";
+          }
+        ?>
         <li class="nav-item">
           <a class="nav-link active" href="#">Account</a>
         </li>
       </ul>
-      <span class="navbar-text"><a href="logout.php" >Log out</a></span>
+      <?php
+        if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"]){
+          echo "<span class='navbar-text'><a href='logout.php' >Log Out</a></span>";
+        }
+        else{
+          echo "<span class='navbar-text'><a href='login.php' >Log In</a></span>";
+        }
+      ?>
     </div>
   </div>
 </nav>

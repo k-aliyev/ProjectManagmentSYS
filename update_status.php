@@ -24,5 +24,13 @@
         $stmt = $db->prepare($sql);
         $stmt->execute([$_POST['member_id'], $_POST['project_id']]);
     }
+    if($_POST["action"] == 'delete_project'){
+        $sql = "DELETE FROM project WHERE id = :project_id;
+                DELETE FROM members WHERE project_id = :project_id;
+                DELETE FROM project_files WHERE project_id = :project_id;" ;
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':project_id',$_POST['project_id']);
+        $stmt->execute();
+    }
 
 ?>
