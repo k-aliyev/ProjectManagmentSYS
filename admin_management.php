@@ -129,7 +129,7 @@
                                 ?>
                                 </div>
                                 <hr>
-                                <h3>Available Students</h3>
+                                <h3>Available Members</h3>
                                 <div class="col-12" >
                                 <?php
                                     

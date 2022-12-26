@@ -19,6 +19,34 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+  $elements = array();
+  $sql= "SELECT project.id, project.name, project.year, project.semester, project.status FROM project 
+  JOIN members on project.id = members.project_id
+  JOIN user on user.id = members.user_id WHERE ";
+  if(isset($_POST["member_name"]) && $_POST["member_name"] != ""){
+    $sql = $sql."user.name like ? ";
+    $elements[] = $_POST["member_name"];
+  }
+  if(isset($_POST["project_name"]) && $_POST["project_name"] != ""){
+    $sql = $sql."project.name like ? ";
+    $elements[] = $_POST["project_name"];
+  }
+  if(isset($_POST["year"]) && $_POST["year"] != ""){
+    $sql = $sql."project.year = ? ";
+    $elements[] = $_POST["year"];
+  }
+  if(isset($_POST["semester"]) && $_POST["semester"] != 'default'){
+    $sql = $sql."project.semester = ? ";
+    $elements[] = $_POST["semester"];
+  }
+  if(count($elements) > 0){
+    $stmt = $db->prepare($sql) ;
+    $stmt->execute($elements);
+    $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -43,6 +71,40 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
           <?php include "nav.php"; ?>
   </header>
   <main>
+  <div id="collapsible-element" class="collapse">
+  <form method="post" action="list.php" class="form search-container">
+      <div class="row">
+          <div class="col-2">
+            <input type="text" name="member_name" id="member_name" class="form-control" placeholder = "Member Name">
+          </div>
+          <div class="col-2">
+            <input type="text" name="project_name" id="project_name" class="form-control" placeholder = "Project Name">
+          </div>
+          <div class="col-2">
+            <input type="text" name="year" id="year" class="form-control" placeholder = "YYYY">
+          </div>
+          <div class="col-2">
+            <select class="form-control" name="semester" id="semester">
+              <option val="default" disabled selected>Chose option</option>
+              <option val="fall">Fall</option>
+              <option val="spring">Spring</option>
+            </select>
+          </div>
+          <div class="col-2 justify-content-center" style="margin-left:auto;">
+            <button type="submit" class="btn btn-primary">Search 🔎</button>
+          </div>
+      </div>
+    </form>
+    </div>
+   <div style="margin-left:auto;">
+      <button type="button" style="margin: 10px;" class="btn btn-secondary btn-circle btn-lg" data-bs-toggle="collapse" data-bs-target="#collapsible-element" aria-expanded="false" aria-controls="collapsible-element">
+        <svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.99997 7V4C2.99997 3.44772 3.44769 3 3.99997 3H20.0001C20.5523 3 21 3.44766 21.0001 3.9999L21.0004 7M2.99997 7L9.65077 12.7007C9.87241 12.8907 9.99998 13.168 9.99998 13.4599V19.7192C9.99998 20.3698 10.6114 20.8472 11.2425 20.6894L13.2425 20.1894C13.6877 20.0781 14 19.6781 14 19.2192V13.46C14 13.168 14.1275 12.8907 14.3492 12.7007L21.0004 7M2.99997 7H21.0004" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button> 
+   </div>
+
+    </div>  
     <div class="container">
       <h2>List of Elements</h2>
       <table class="table">
@@ -50,7 +112,8 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
-                <th scope="col">Submit Date</th>
+                <th scope="col">Year</th>
+                <th scope="col">Semester</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
             </tr>
@@ -61,7 +124,8 @@ if(isset($_GET["type"]) && $_GET["type"]="r"){
               echo " <tr>
                         <th scope='col'>{$value["id"]}</th>
                         <th scope='col'>{$value["name"]}</th>
-                        <th scope='col'>{$value["year"]} {$value["semester"]}</th>";
+                        <th scope='col'>{$value["year"]}</th>
+                        <th scope='col'>{$value["semester"]}</th>";
 
                echo "<th scope='col'>";
                switch($value["status"]){
