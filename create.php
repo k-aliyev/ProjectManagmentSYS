@@ -21,11 +21,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && in_array($_SESSION["user_role"], $rol
 
         $sql = "INSERT INTO project(id, name, description, requirements, software, hardware, status, year, semester, advisor_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $stmt->execute([$id + 1, $name, $_POST["description"], $_POST["requirements"],$_POST["software"],$_POST["hardware"],"waiting",date("Y"), $_POST["semester"], -1]);
+        if($_SESSION["user_role"] == "student" || $_SESSION["user_role"] == "firm"){
+            $stmt->execute([$id + 1, $name, $_POST["description"], $_POST["requirements"],$_POST["software"],$_POST["hardware"],"waiting",date("Y"), $_POST["semester"], -1]);
 
-        $sql = "INSERT INTO members(user_id, project_id) VALUES (?, ?)";
-        $stmt = $db->prepare($sql);
-        $stmt->execute([$_SESSION["user_id"], $id + 1]);
+            $sql = "INSERT INTO members(user_id, project_id) VALUES (?, ?)";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([$_SESSION["user_id"], $id + 1]);
+            
+        }
+        if($_SESSION["user_role"] == "instructor"){
+            $stmt->execute([$id + 1, $name, $_POST["description"], $_POST["requirements"],$_POST["software"],$_POST["hardware"],"waiting",date("Y"), $_POST["semester"], $_SESSION["user_id"]]);
+        }
+
         header("Location: list.php?type=r");
     }
 }

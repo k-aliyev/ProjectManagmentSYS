@@ -139,13 +139,13 @@
           </div>
         </div>
         <div class="row" <?php if(!in_array($_SESSION["user_role"], $roles)){ echo "style='display:none;'"; }?>>
-          <div class="col-md-<?php if(!isset($ad_projects)){ echo '14';}else{ echo '6';}?>">
+        <div class="col-md-<?php if(!isset($ad_projects)){ echo '14';}else{ echo '6';}?>">
             <div class="card mb-4 mb-md-0">
               <div class="card-body">
                 <p class="mb-4">My Project Status</p>
                     <?php
                         foreach ($projects as $key => $item) {
-                            echo "<div class='d-flex align-items-center justify-content-between'>";
+                            echo "<div class='mb-1 d-flex align-items-center justify-content-between'>";
                             echo "<a href='view.php?id={$item["id"]}' class='mb-0 font-weight-bold small'>{$item["name"]}</a>";
                             echo "<div class='w-80'></div>";
                             switch($item["status"]){
@@ -159,22 +159,22 @@
                                   echo "<button type='button' class='btn btn-danger' disabled>Rejected</button>";
                                   break;   
                                 }   
-                            echo "<div>";
+                            echo "</div>";
                         }
                     
                     ?>
 
-                
               </div>
             </div>
           </div>
+
           <div class="col-md-6" <?php if(!isset($ad_projects)){ echo "style='display:none;'"; }?>>
             <div class="card mb-4 mb-md-0">
               <div class="card-body">
                 <p class="mb-4">Assigned Project Status</p>
                 <?php
                         foreach ($ad_projects as $key => $item) {
-                            echo "<div class='d-flex align-items-center justify-content-between'>";
+                            echo "<div class='mb-1 d-flex align-items-center justify-content-between'>";
                             echo "<a href='view.php?id={$item["id"]}' class='mb-0 font-weight-bold small'>{$item["name"]}</a>";
                             echo "<div class='w-80'></div>";
                             switch($item["status"]){
@@ -188,7 +188,7 @@
                                   echo "<button type='button' class='btn btn-danger' disabled>Rejected</button>";
                                   break;   
                                 }   
-                            echo "<div>";
+                            echo "</div>";
                         }
                     
                     ?>

@@ -9,8 +9,13 @@ if(isset($_GET["type"]) && !isset($_SESSION["loggedin"])){
   header("Location: login.php");
 }
 if(isset($_GET["type"]) && $_GET["type"]="r"){
-    
+
+  if($_SESSION["user_role"] == "instructor"){
+    $sql= "SELECT * FROM project WHERE advisor_id = ?";
+   }else{
     $sql= "SELECT * FROM project JOIN members on project.id = members.project_id WHERE members.user_id = ?";
+   }
+  
     $stmt = $db->prepare($sql) ;
     $stmt->execute([$_SESSION["user_id"]]);
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -75,7 +80,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   <form method="post" action="list.php" class="form search-container">
       <div class="row">
           <div class="col-2">
-            <input type="text" name="member_name" id="member_name" class="form-control" placeholder = "Member Name">
+            <input type="text" name="member_name" id="member_name" class="form-control" placeholder = "Student Name">
           </div>
           <div class="col-2">
             <input type="text" name="project_name" id="project_name" class="form-control" placeholder = "Project Name">
@@ -159,7 +164,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
             if(isset($_GET["type"]) && $_GET["type"]="r"){
-              echo "<tr><td colspan='4'><a href='create.php'>Create new project + </a><td></tr>";
+              echo "<tr><td colspan='5'><a href='create.php'>Create new project + </a><td></tr>";
           }
         ?>
       </tbody>
